@@ -1,0 +1,17 @@
+spring:
+  outpit:
+    ansi:
+      enable: always
+  jpa:
+    show-sql: true
+    generate-ddl: true
+server:
+  port: 8443
+  http2:
+    enabled: true
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:keystore/rtc4j.p12
+    key-alias: rtc4j-rest-api
+    key-store-password: ${RTC4J_KEY_STORE_PASSWORD}

@@ -9,6 +9,8 @@ import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
 import com.gitlab.rtc4j.restapi.domain.Tag;
 import com.gitlab.rtc4j.restapi.domain.TodoItem;
 import com.gitlab.rtc4j.restapi.domain.TodoList;
+import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
+import com.gitlab.rtc4j.restapi.services.TodoListService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,13 +29,17 @@ public class Application implements ApplicationRunner {
 
   private final TagDAO tagDAO;
 
+  private final TodoListService todoListService;
+
   public Application(
     final TodoListDAO todoListDAO,
     final TodoItemDAO todoItemDAO,
-    final TagDAO tagDAO) {
+    final TagDAO tagDAO,
+    final TodoListService todoListService) {
     this.todoListDAO = todoListDAO;
     this.todoItemDAO = todoItemDAO;
     this.tagDAO = tagDAO;
+    this.todoListService = todoListService;
   }
 
   public static void main(String[] args) {
@@ -41,8 +47,8 @@ public class Application implements ApplicationRunner {
   }
 
   @GetMapping("/")
-  public ResponseEntity<String> helloWorld() {
-    return ResponseEntity.ok("Hello, World!");
+  public ResponseEntity<List<TodoListResponse>> getAllTodoLists() {
+    return ResponseEntity.ok(todoListService.findAll());
   }
 
   @Override

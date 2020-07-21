@@ -1,5 +1,16 @@
 package com.gitlab.rtc4j.restapi;
 
+import java.util.List;
+import java.util.Set;
+
+import com.gitlab.rtc4j.restapi.daos.TagDAO;
+import com.gitlab.rtc4j.restapi.daos.TodoItemDAO;
+import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
+import com.gitlab.rtc4j.restapi.domain.Tag;
+import com.gitlab.rtc4j.restapi.domain.TodoItem;
+import com.gitlab.rtc4j.restapi.domain.TodoList;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SpringBootApplication
-public class Application {
+public class Application implements ApplicationRunner {
+
+  private final TodoListDAO todoListDAO;
+
+  private final TodoItemDAO todoItemDAO;
+
+  private final TagDAO tagDAO;
+
+  public Application(
+    final TodoListDAO todoListDAO,
+    final TodoItemDAO todoItemDAO,
+    final TagDAO tagDAO) {
+    this.todoListDAO = todoListDAO;
+    this.todoItemDAO = todoItemDAO;
+    this.tagDAO = tagDAO;
+  }
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
@@ -17,5 +43,59 @@ public class Application {
   @GetMapping("/")
   public ResponseEntity<String> helloWorld() {
     return ResponseEntity.ok("Hello, World!");
+  }
+
+  @Override
+  public void run(final ApplicationArguments args) throws Exception {
+    final Tag developmentTag = tagDAO.save(Tag
+      .builder()
+      .name("Development")
+      .build());
+
+    final Tag javaTag = tagDAO.save(Tag
+      .builder()
+      .name("Java")
+      .metaTags(Set.of(developmentTag))
+      .build());
+
+    final TodoList rtc4jList = todoListDAO.save(TodoList
+      .builder()
+      .name("RTC4J list")
+      .description("The RTC4J project's list")
+      .build());
+
+    final TodoItem restfulApi = todoItemDAO.save(TodoItem
+      .builder()
+      .name("Create RESTful API")
+      .description("The server")
+      .list(rtc4jList)
+      .tags(Set.of(javaTag))
+      .build());
+
+    todoItemDAO.save(TodoItem
+      .builder()
+      .name("Create the bases")
+      .description("Initial development")
+      .list(rtc4jList)
+      .parent(restfulApi)
+      .tags(Set.of(developmentTag))
+      .build());
+
+    todoItemDAO.save(TodoItem
+      .builder()
+      .name("Create HTML-based API")
+      .description("Experiment with plain-old HTML")
+      .list(rtc4jList)
+      .parent(restfulApi)
+      .tags(Set.of(developmentTag))
+      .build());
+
+    todoItemDAO.save(TodoItem
+      .builder()
+      .name("Create REST client")
+      .description("The HATEOAS-aware client")
+      .list(rtc4jList)
+      .tags(Set.of(developmentTag))
+      .build());
   }
 }

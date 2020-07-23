@@ -37,10 +37,10 @@ public class AddTodoItemRequest {
   private Long parentId;
 
   public Optional<Long> getListId() {
-    return Optional.of(listId);
+    return Optional.ofNullable(listId);
   }
 
   public Optional<Long> getParentId() {
-    return Optional.of(listId);
+    return Optional.ofNullable(parentId);
   }
 }

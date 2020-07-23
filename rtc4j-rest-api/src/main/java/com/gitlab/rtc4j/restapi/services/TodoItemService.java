@@ -24,5 +24,11 @@ public interface TodoItemService {
 
   @NotNull
   @Valid
-  TodoItemResponse update(@NotNull @Valid final UpdateTodoItemRequest request);
+  TodoItemResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final UpdateTodoItemRequest request);
+
+  @NotNull
+  @Valid
+  void deleteById(@Min(1L) final long id);
 }

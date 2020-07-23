@@ -18,9 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class UpdateTodoItemRequest {
 
-  @Min(1L)
-  private long id;
-
   @NotEmpty
   private String name;
 
@@ -40,10 +37,10 @@ public class UpdateTodoItemRequest {
   private Long parentId;
 
   public Optional<Long> getListId() {
-    return Optional.of(listId);
+    return Optional.ofNullable(listId);
   }
 
   public Optional<Long> getParentId() {
-    return Optional.of(listId);
+    return Optional.ofNullable(parentId);
   }
 }

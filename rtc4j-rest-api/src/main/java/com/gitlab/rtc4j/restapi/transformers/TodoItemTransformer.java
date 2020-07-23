@@ -23,6 +23,8 @@ public class TodoItemTransformer {
       return null;
     }
 
+    final @Valid TodoItem parent = todoItem.getParent();
+
     return TodoItemResponse
       .builder()
       .id(todoItem.getId())
@@ -31,7 +33,7 @@ public class TodoItemTransformer {
       .weight(todoItem.getWeight())
       .status(todoItem.getStatus())
       .list(todoItem.getList().getId())
-      .parent(todoItem.getParent().getId())
+      .parent(parent != null ? parent.getId() : null)
       .children(todoItem.getChildren().stream().map(TodoItem::getId).collect(toSet()))
       .tags(todoItem.getTags().stream().map(Tag::getId).collect(toSet()))
       .build();
@@ -62,9 +64,7 @@ public class TodoItemTransformer {
   public TodoItem from(
     @NotNull @Valid final TodoItem todoItem,
     @NotNull @Valid final UpdateTodoItemRequest request) {
-    if (todoItem.getId() != request.getId()) {
-      throw new IllegalArgumentException("The IDs don't match");
-    }
+    final long listId = request.getListId().orElseThrow();
 
     return todoItem
       .toBuilder()
@@ -78,6 +78,14 @@ public class TodoItemTransformer {
         .getParentId()
         .map(id -> TodoItem.builder().id(id).build())
         .orElse(null))
+      .children(todoItem
+        .getChildren()
+        .stream()
+        .peek(child -> {
+          child.setList(TodoList.builder().id(listId).build());
+          child.setStatus(request.getStatus());
+        })
+        .collect(toSet()))
       .weight(request.getWeight())
       .status(request.getStatus())
       .build();

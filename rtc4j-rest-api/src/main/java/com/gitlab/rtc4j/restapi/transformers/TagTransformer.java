@@ -3,8 +3,8 @@ package com.gitlab.rtc4j.restapi.transformers;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.gitlab.rtc4j.restapi.daos.TagDAO;
 import com.gitlab.rtc4j.restapi.domain.Tag;
+import com.gitlab.rtc4j.restapi.domain.TodoItem;
 import com.gitlab.rtc4j.restapi.dtos.tag.AddTagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
 import com.gitlab.rtc4j.restapi.dtos.tag.UpdateTagRequest;
@@ -27,48 +27,15 @@ public class TagTransformer {
       .id(tag.getId())
       .name(tag.getName())
       .isMeta(!tag.getTags().isEmpty())
-      .tags(tag.getTags().stream().map(TagTransformer::toShallowResponse).collect(toSet()))
-      .metaTags(tag.getTags().stream().map(TagTransformer::toShallowResponse).collect(toSet()))
-      .taggedItems(tag
-        .getTaggedItems()
-        .stream()
-        .map(TodoItemTransformer::toShallowResponse)
-        .collect(toSet()))
+      .tags(tag.getTags().stream().map(Tag::getId).collect(toSet()))
+      .metaTags(tag.getTags().stream().map(Tag::getId).collect(toSet()))
+      .taggedItems(tag.getTaggedItems().stream().map(TodoItem::getId).collect(toSet()))
       .build();
   }
 
   @NotNull
   @Valid
-  public TagResponse toShallowResponse(@NotNull @Valid Tag tag) {
-    return TagResponse
-      .builder()
-      .id(tag.getId())
-      .name(tag.getName())
-      .isMeta(!tag.getTags().isEmpty())
-      .tags(tag
-        .getTags()
-        .stream()
-        .map(it -> TagResponse
-          .builder()
-          .id(it.getId())
-          .name(it.getName())
-          .build())
-        .collect(toSet()))
-      .metaTags(tag
-        .getMetaTags()
-        .stream()
-        .map(it -> TagResponse
-          .builder()
-          .id(it.getId())
-          .name(it.getName())
-          .build())
-        .collect(toSet()))
-      .build();
-  }
-
-  @NotNull
-  @Valid
-  public Tag from(@NotNull @Valid final AddTagRequest request, @NotNull TagDAO tagDAO) {
+  public Tag from(@NotNull @Valid final AddTagRequest request) {
     return Tag
       .builder()
       .name(request.getName())
@@ -77,11 +44,14 @@ public class TagTransformer {
 
   @NotNull
   @Valid
-  public Tag from(@NotNull @Valid final UpdateTagRequest request, @NotNull TagDAO tagDAO) {
-    final Tag tag = tagDAO.findById(request.getId()).orElseThrow();
+  public Tag from(@NotNull @Valid final Tag tag, @NotNull @Valid final UpdateTagRequest request) {
+    if (tag.getId() != request.getId()) {
+      throw new IllegalArgumentException("The IDs don't match");
+    }
 
-    tag.setName(request.getName());
-
-    return tag;
+    return tag
+      .toBuilder()
+      .name(request.getName())
+      .build();
   }
 }

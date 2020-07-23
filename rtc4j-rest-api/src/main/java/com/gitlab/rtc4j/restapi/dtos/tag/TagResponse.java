@@ -1,12 +1,10 @@
 package com.gitlab.rtc4j.restapi.dtos.tag;
 
 import java.util.Set;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,13 +19,13 @@ public class TagResponse {
   private String name;
 
   @NotNull
-  private Set<@Valid TagResponse> tags;
+  private Set<Long> tags;
 
   @NotNull
-  private Set<@Valid TagResponse> metaTags;
+  private Set<Long> metaTags;
 
   @NotNull
-  private Set<@Valid TodoItemResponse> taggedItems;
+  private Set<Long> taggedItems;
 
   private boolean isMeta;
 }

@@ -26,7 +26,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
+@Builder(toBuilder = true)
 @Entity
 public class Tag {
 

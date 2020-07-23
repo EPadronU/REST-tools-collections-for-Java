@@ -1,10 +1,9 @@
 package com.gitlab.rtc4j.restapi.transformers;
 
-import java.util.Collections;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
+import com.gitlab.rtc4j.restapi.domain.TodoItem;
 import com.gitlab.rtc4j.restapi.domain.TodoList;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.AddTodoListRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
@@ -24,19 +23,7 @@ public class TodoListTransformer {
       .id(todoList.getId())
       .name(todoList.getName())
       .description(todoList.getDescription())
-      .items(todoList.getItems().stream().map(TodoItemTransformer::toResponse).collect(toSet()))
-      .build();
-  }
-
-  @NotNull
-  @Valid
-  public TodoListResponse toShallowResponse(@NotNull @Valid TodoList todoList) {
-    return TodoListResponse
-      .builder()
-      .id(todoList.getId())
-      .name(todoList.getName())
-      .description(todoList.getDescription())
-      .items(Collections.emptySet())
+      .items(todoList.getItems().stream().map(TodoItem::getId).collect(toSet()))
       .build();
   }
 
@@ -53,13 +40,16 @@ public class TodoListTransformer {
   @NotNull
   @Valid
   public TodoList from(
-    @NotNull @Valid final UpdateTodoListRequest request,
-    @NotNull TodoListDAO todoListDAO) {
-    final TodoList todoList = todoListDAO.findById(request.getId()).orElseThrow();
+    @NotNull @Valid final TodoList todoList,
+    @NotNull @Valid final UpdateTodoListRequest request) {
+    if (todoList.getId() != request.getId()) {
+      throw new IllegalArgumentException("The IDs don't match");
+    }
 
-    todoList.setName(request.getName());
-    todoList.setDescription(request.getDescription());
-
-    return todoList;
+    return todoList
+      .toBuilder()
+      .name(request.getName())
+      .description(request.getDescription())
+      .build();
   }
 }

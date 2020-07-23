@@ -7,8 +7,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.domain.TodoItem;
-import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
-import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -33,14 +31,14 @@ public class TodoItemResponse {
 
   @NotNull
   @Valid
-  private TodoListResponse list;
+  private Long list;
 
   @Valid
-  private TodoItemResponse parent;
+  private Long parent;
 
   @NotNull
-  private Set<@Valid TodoItemResponse> children;
+  private Set<Long> children;
 
   @NotNull
-  private Set<@Valid TagResponse> tags;
+  private Set<Long> tags;
 }

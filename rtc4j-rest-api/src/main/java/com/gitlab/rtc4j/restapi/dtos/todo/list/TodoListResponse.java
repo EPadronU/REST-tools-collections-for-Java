@@ -1,12 +1,10 @@
 package com.gitlab.rtc4j.restapi.dtos.todo.list;
 
 import java.util.Set;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,5 +22,5 @@ public class TodoListResponse {
   private String description;
 
   @NotNull
-  private Set<@Valid TodoItemResponse> items;
+  private Set<Long> items;
 }

@@ -3,9 +3,9 @@ package com.gitlab.rtc4j.restapi.transformers;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.gitlab.rtc4j.restapi.daos.TodoItemDAO;
-import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
+import com.gitlab.rtc4j.restapi.domain.Tag;
 import com.gitlab.rtc4j.restapi.domain.TodoItem;
+import com.gitlab.rtc4j.restapi.domain.TodoList;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.AddTodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.UpdateTodoItemRequest;
@@ -30,61 +30,28 @@ public class TodoItemTransformer {
       .description(todoItem.getDescription())
       .weight(todoItem.getWeight())
       .status(todoItem.getStatus())
-      .list(TodoListTransformer.toShallowResponse(todoItem.getList()))
-      .parent(TodoItemTransformer.toShallowResponse(todoItem.getParent()))
-      .children(todoItem
-        .getChildren()
-        .stream()
-        .map(TodoItemTransformer::toShallowResponse)
-        .collect(toSet()))
-      .tags(todoItem.getTags().stream().map(TagTransformer::toShallowResponse).collect(toSet()))
+      .list(todoItem.getList().getId())
+      .parent(todoItem.getParent().getId())
+      .children(todoItem.getChildren().stream().map(TodoItem::getId).collect(toSet()))
+      .tags(todoItem.getTags().stream().map(Tag::getId).collect(toSet()))
       .build();
   }
 
   @NotNull
   @Valid
-  public TodoItemResponse toShallowResponse(@Valid TodoItem todoItem) {
-    if (todoItem == null) {
-      return null;
-    }
-
-    return TodoItemResponse
-      .builder()
-      .id(todoItem.getId())
-      .name(todoItem.getName())
-      .description(todoItem.getDescription())
-      .weight(todoItem.getWeight())
-      .status(todoItem.getStatus())
-      .list(TodoListTransformer.toShallowResponse(todoItem.getList()))
-      .children(todoItem
-        .getChildren()
-        .stream()
-        .map(it -> TodoItemResponse
-          .builder()
-          .id(it.getId())
-          .name(it.getName())
-          .description(it.getDescription())
-          .weight(it.getWeight())
-          .status(it.getStatus())
-          .tags(it.getTags().stream().map(TagTransformer::toShallowResponse).collect(toSet()))
-          .build())
-        .collect(toSet()))
-      .tags(todoItem.getTags().stream().map(TagTransformer::toShallowResponse).collect(toSet()))
-      .build();
-  }
-
-  @NotNull
-  @Valid
-  public TodoItem from(
-    @NotNull @Valid final AddTodoItemRequest request,
-    @NotNull TodoListDAO todoListDAO,
-    @NotNull TodoItemDAO todoItemDAO) {
+  public TodoItem from(@NotNull @Valid final AddTodoItemRequest request) {
     return TodoItem
       .builder()
       .name(request.getName())
       .description(request.getDescription())
-      .list(todoListDAO.findById(request.getListId()).orElseThrow())
-      .parent(todoItemDAO.findById(request.getParentId()).orElseThrow())
+      .list(request
+        .getListId()
+        .map(id -> TodoList.builder().id(id).build())
+        .orElse(null))
+      .parent(request
+        .getParentId()
+        .map(id -> TodoItem.builder().id(id).build())
+        .orElse(null))
       .weight(request.getWeight())
       .status(request.getStatus())
       .build();
@@ -93,18 +60,26 @@ public class TodoItemTransformer {
   @NotNull
   @Valid
   public TodoItem from(
-    @NotNull @Valid final UpdateTodoItemRequest request,
-    @NotNull TodoListDAO todoListDAO,
-    @NotNull TodoItemDAO todoItemDAO) {
-    final TodoItem todoItem = todoItemDAO.findById(request.getId()).orElseThrow();
+    @NotNull @Valid final TodoItem todoItem,
+    @NotNull @Valid final UpdateTodoItemRequest request) {
+    if (todoItem.getId() != request.getId()) {
+      throw new IllegalArgumentException("The IDs don't match");
+    }
 
-    todoItem.setName(request.getName());
-    todoItem.setDescription(request.getDescription());
-    todoItem.setList(todoListDAO.findById(request.getListId()).orElseThrow());
-    todoItem.setParent(todoItemDAO.findById(request.getParentId()).orElseThrow());
-    todoItem.setWeight(request.getWeight());
-    todoItem.setStatus(request.getStatus());
-
-    return todoItem;
+    return todoItem
+      .toBuilder()
+      .name(request.getName())
+      .description(request.getDescription())
+      .list(request
+        .getListId()
+        .map(id -> TodoList.builder().id(id).build())
+        .orElse(null))
+      .parent(request
+        .getParentId()
+        .map(id -> TodoItem.builder().id(id).build())
+        .orElse(null))
+      .weight(request.getWeight())
+      .status(request.getStatus())
+      .build();
   }
 }

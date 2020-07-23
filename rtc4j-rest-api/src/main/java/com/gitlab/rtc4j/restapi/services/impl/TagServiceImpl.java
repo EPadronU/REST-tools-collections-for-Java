@@ -27,21 +27,33 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public @NotNull List<@NotNull @Valid TagResponse> findAll() {
-    return tagDAO.findAll().stream().map(TagTransformer::toResponse).collect(toList());
+    return tagDAO
+      .findAll()
+      .stream()
+      .map(TagTransformer::toResponse)
+      .collect(toList());
   }
 
   @Override
   public @NotNull Optional<@Valid TagResponse> findById(@Min(1L) final long id) {
-    return tagDAO.findById(id).map(TagTransformer::toResponse);
+    return tagDAO
+      .findById(id)
+      .map(TagTransformer::toResponse);
   }
 
   @Override
   public @NotNull @Valid TagResponse save(final @NotNull @Valid AddTagRequest request) {
-    return TagTransformer.toResponse(tagDAO.save(TagTransformer.from(request, tagDAO)));
+    return TagTransformer
+      .toResponse(tagDAO.save(TagTransformer.from(request)));
   }
 
   @Override
   public @NotNull @Valid TagResponse update(final @NotNull @Valid UpdateTagRequest request) {
-    return TagTransformer.toResponse(tagDAO.save(TagTransformer.from(request, tagDAO)));
+    return tagDAO
+      .findById(request.getId())
+      .map(dbTag -> TagTransformer.from(dbTag, request))
+      .map(tagDAO::save)
+      .map(TagTransformer::toResponse)
+      .orElseThrow();
   }
 }

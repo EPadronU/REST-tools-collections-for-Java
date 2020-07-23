@@ -27,23 +27,33 @@ public class TodoListServiceImpl implements TodoListService {
 
   @Override
   public @NotNull List<@NotNull @Valid TodoListResponse> findAll() {
-    return todoListDAO.findAll().stream().map(TodoListTransformer::toResponse).collect(toList());
+    return todoListDAO
+      .findAll()
+      .stream()
+      .map(TodoListTransformer::toResponse)
+      .collect(toList());
   }
 
   @Override
   public @NotNull Optional<@Valid TodoListResponse> findById(@Min(1L) final long id) {
-    return todoListDAO.findById(id).map(TodoListTransformer::toResponse);
+    return todoListDAO
+      .findById(id)
+      .map(TodoListTransformer::toResponse);
   }
 
   @Override
   public @NotNull @Valid TodoListResponse save(final @NotNull @Valid AddTodoListRequest request) {
-    return TodoListTransformer.toResponse(
-      todoListDAO.save(TodoListTransformer.from(request)));
+    return TodoListTransformer
+      .toResponse(todoListDAO.save(TodoListTransformer.from(request)));
   }
 
   @Override
   public @NotNull @Valid TodoListResponse update(final @NotNull @Valid UpdateTodoListRequest request) {
-    return TodoListTransformer.toResponse(
-      todoListDAO.save(TodoListTransformer.from(request, todoListDAO)));
+    return todoListDAO
+      .findById(request.getId())
+      .map(dbTodoList -> TodoListTransformer.from(dbTodoList, request))
+      .map(todoListDAO::save)
+      .map(TodoListTransformer::toResponse)
+      .orElseThrow();
   }
 }

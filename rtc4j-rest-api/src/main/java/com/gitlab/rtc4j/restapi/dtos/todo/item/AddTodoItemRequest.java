@@ -1,5 +1,6 @@
 package com.gitlab.rtc4j.restapi.dtos.todo.item;
 
+import java.util.Optional;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -30,4 +31,12 @@ public class AddTodoItemRequest {
 
   @Min(1)
   private Long parentId;
+
+  public Optional<Long> getListId() {
+    return Optional.of(listId);
+  }
+
+  public Optional<Long> getParentId() {
+    return Optional.of(listId);
+  }
 }

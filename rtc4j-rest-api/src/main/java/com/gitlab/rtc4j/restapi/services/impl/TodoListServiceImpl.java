@@ -1,6 +1,7 @@
 package com.gitlab.rtc4j.restapi.services.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -12,7 +13,9 @@ import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.UpdateTodoListRequest;
 import com.gitlab.rtc4j.restapi.services.TodoListService;
 import com.gitlab.rtc4j.restapi.transformers.TodoListTransformer;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,18 +45,32 @@ public class TodoListServiceImpl implements TodoListService {
   }
 
   @Override
-  public @NotNull @Valid TodoListResponse save(final @NotNull @Valid AddTodoListRequest request) {
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid TodoListResponse save(@NotNull @Valid final AddTodoListRequest request) {
     return TodoListTransformer
       .toResponse(todoListDAO.save(TodoListTransformer.from(request)));
   }
 
   @Override
-  public @NotNull @Valid TodoListResponse update(final @NotNull @Valid UpdateTodoListRequest request) {
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid TodoListResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final UpdateTodoListRequest request) {
     return todoListDAO
-      .findById(request.getId())
+      .findById(id)
       .map(dbTodoList -> TodoListTransformer.from(dbTodoList, request))
       .map(todoListDAO::save)
       .map(TodoListTransformer::toResponse)
       .orElseThrow();
+  }
+
+  @Override
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid void deleteById(@Min(1L) final long id) {
+    try {
+      todoListDAO.deleteById(id);
+    } catch (EmptyResultDataAccessException ignore) {
+      throw new NoSuchElementException();
+    }
   }
 }

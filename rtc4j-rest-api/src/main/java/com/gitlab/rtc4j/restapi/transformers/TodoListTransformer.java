@@ -42,10 +42,6 @@ public class TodoListTransformer {
   public TodoList from(
     @NotNull @Valid final TodoList todoList,
     @NotNull @Valid final UpdateTodoListRequest request) {
-    if (todoList.getId() != request.getId()) {
-      throw new IllegalArgumentException("The IDs don't match");
-    }
-
     return todoList
       .toBuilder()
       .name(request.getName())

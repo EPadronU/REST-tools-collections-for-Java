@@ -2,6 +2,7 @@ package com.gitlab.rtc4j.restapi.domain;
 
 import java.util.Collections;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -42,7 +43,7 @@ public class TodoList {
   private String description = "";
 
   @NotNull
-  @OneToMany(mappedBy = "list")
+  @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
   private Set<@Valid @NotNull TodoItem> items = Collections.emptySet();
 
   @SuppressWarnings("FieldMayBeFinal")

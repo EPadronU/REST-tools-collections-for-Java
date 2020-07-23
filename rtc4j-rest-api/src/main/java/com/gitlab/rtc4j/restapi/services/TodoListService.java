@@ -24,5 +24,11 @@ public interface TodoListService {
 
   @NotNull
   @Valid
-  TodoListResponse update(@NotNull @Valid final UpdateTodoListRequest request);
+  TodoListResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final UpdateTodoListRequest request);
+
+  @NotNull
+  @Valid
+  void deleteById(@Min(1L) final long id);
 }

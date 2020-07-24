@@ -5,9 +5,8 @@ import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.domain.Tag;
 import com.gitlab.rtc4j.restapi.domain.TodoItem;
-import com.gitlab.rtc4j.restapi.dtos.tag.AddTagRequest;
+import com.gitlab.rtc4j.restapi.dtos.tag.TagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
-import com.gitlab.rtc4j.restapi.dtos.tag.UpdateTagRequest;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toSet;
@@ -35,7 +34,7 @@ public class TagTransformer {
 
   @NotNull
   @Valid
-  public Tag from(@NotNull @Valid final AddTagRequest request) {
+  public Tag from(@NotNull @Valid final TagRequest request) {
     return Tag
       .builder()
       .name(request.getName())
@@ -44,7 +43,7 @@ public class TagTransformer {
 
   @NotNull
   @Valid
-  public Tag from(@NotNull @Valid final Tag tag, @NotNull @Valid final UpdateTagRequest request) {
+  public Tag from(@NotNull @Valid final Tag tag, @NotNull @Valid final TagRequest request) {
     return tag
       .toBuilder()
       .name(request.getName())

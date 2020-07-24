@@ -8,9 +8,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.daos.TodoItemDAO;
-import com.gitlab.rtc4j.restapi.dtos.todo.item.AddTodoItemRequest;
+import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
-import com.gitlab.rtc4j.restapi.dtos.todo.item.UpdateTodoItemRequest;
 import com.gitlab.rtc4j.restapi.services.TodoItemService;
 import com.gitlab.rtc4j.restapi.transformers.TodoItemTransformer;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -46,7 +45,7 @@ public class TodoItemServiceImpl implements TodoItemService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TodoItemResponse save(@NotNull @Valid final AddTodoItemRequest request) {
+  public @NotNull @Valid TodoItemResponse save(@NotNull @Valid final TodoItemRequest request) {
     return TodoItemTransformer
       .toResponse(todoItemDAO.save(TodoItemTransformer.from(request)));
   }
@@ -55,7 +54,7 @@ public class TodoItemServiceImpl implements TodoItemService {
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TodoItemResponse update(
     @Min(1L) final long id,
-    @NotNull @Valid final UpdateTodoItemRequest request) {
+    @NotNull @Valid final TodoItemRequest request) {
     return todoItemDAO
       .findById(id)
       .map(dbTodoItem -> TodoItemTransformer.from(dbTodoItem, request))

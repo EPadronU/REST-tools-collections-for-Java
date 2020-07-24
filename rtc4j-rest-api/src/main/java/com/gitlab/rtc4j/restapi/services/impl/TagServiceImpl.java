@@ -8,9 +8,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.daos.TagDAO;
-import com.gitlab.rtc4j.restapi.dtos.tag.AddTagRequest;
+import com.gitlab.rtc4j.restapi.dtos.tag.TagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
-import com.gitlab.rtc4j.restapi.dtos.tag.UpdateTagRequest;
 import com.gitlab.rtc4j.restapi.services.TagService;
 import com.gitlab.rtc4j.restapi.transformers.TagTransformer;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -46,7 +45,7 @@ public class TagServiceImpl implements TagService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TagResponse save(final @NotNull @Valid AddTagRequest request) {
+  public @NotNull @Valid TagResponse save(final @NotNull @Valid TagRequest request) {
     return TagTransformer
       .toResponse(tagDAO.save(TagTransformer.from(request)));
   }
@@ -55,7 +54,7 @@ public class TagServiceImpl implements TagService {
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TagResponse update(
     @Min(1L) final long id,
-    final @NotNull @Valid UpdateTagRequest request) {
+    final @NotNull @Valid TagRequest request) {
     return tagDAO
       .findById(id)
       .map(dbTag -> TagTransformer.from(dbTag, request))

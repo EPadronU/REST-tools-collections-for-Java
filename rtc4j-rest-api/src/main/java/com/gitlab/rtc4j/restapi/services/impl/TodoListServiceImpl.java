@@ -8,9 +8,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
-import com.gitlab.rtc4j.restapi.dtos.todo.list.AddTodoListRequest;
+import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
-import com.gitlab.rtc4j.restapi.dtos.todo.list.UpdateTodoListRequest;
 import com.gitlab.rtc4j.restapi.services.TodoListService;
 import com.gitlab.rtc4j.restapi.transformers.TodoListTransformer;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -46,7 +45,7 @@ public class TodoListServiceImpl implements TodoListService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TodoListResponse save(@NotNull @Valid final AddTodoListRequest request) {
+  public @NotNull @Valid TodoListResponse save(@NotNull @Valid final TodoListRequest request) {
     return TodoListTransformer
       .toResponse(todoListDAO.save(TodoListTransformer.from(request)));
   }
@@ -55,7 +54,7 @@ public class TodoListServiceImpl implements TodoListService {
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TodoListResponse update(
     @Min(1L) final long id,
-    @NotNull @Valid final UpdateTodoListRequest request) {
+    @NotNull @Valid final TodoListRequest request) {
     return todoListDAO
       .findById(id)
       .map(dbTodoList -> TodoListTransformer.from(dbTodoList, request))

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class AddTodoItemRequest {
+public class TodoItemRequest {
 
   @NotEmpty
   private String name;
@@ -30,10 +30,10 @@ public class AddTodoItemRequest {
   @NotNull
   private TodoItem.Status status;
 
-  @Min(1)
+  @Min(1L)
   private Long listId;
 
-  @Min(1)
+  @Min(1L)
   private Long parentId;
 
   public Optional<Long> getListId() {

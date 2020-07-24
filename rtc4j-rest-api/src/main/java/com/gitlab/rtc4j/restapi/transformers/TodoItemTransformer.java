@@ -6,9 +6,8 @@ import javax.validation.constraints.NotNull;
 import com.gitlab.rtc4j.restapi.domain.Tag;
 import com.gitlab.rtc4j.restapi.domain.TodoItem;
 import com.gitlab.rtc4j.restapi.domain.TodoList;
-import com.gitlab.rtc4j.restapi.dtos.todo.item.AddTodoItemRequest;
+import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
-import com.gitlab.rtc4j.restapi.dtos.todo.item.UpdateTodoItemRequest;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toSet;
@@ -41,7 +40,7 @@ public class TodoItemTransformer {
 
   @NotNull
   @Valid
-  public TodoItem from(@NotNull @Valid final AddTodoItemRequest request) {
+  public TodoItem from(@NotNull @Valid final TodoItemRequest request) {
     return TodoItem
       .builder()
       .name(request.getName())
@@ -63,7 +62,7 @@ public class TodoItemTransformer {
   @Valid
   public TodoItem from(
     @NotNull @Valid final TodoItem todoItem,
-    @NotNull @Valid final UpdateTodoItemRequest request) {
+    @NotNull @Valid final TodoItemRequest request) {
     final long listId = request.getListId().orElseThrow();
 
     return todoItem

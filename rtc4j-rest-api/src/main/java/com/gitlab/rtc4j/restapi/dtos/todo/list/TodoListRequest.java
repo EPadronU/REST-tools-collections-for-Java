@@ -1,4 +1,4 @@
-package com.gitlab.rtc4j.restapi.dtos.tag;
+package com.gitlab.rtc4j.restapi.dtos.todo.list;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class AddTagRequest {
+public class TodoListRequest {
 
   @NotEmpty
   private String name;
+
+  private String description;
 }

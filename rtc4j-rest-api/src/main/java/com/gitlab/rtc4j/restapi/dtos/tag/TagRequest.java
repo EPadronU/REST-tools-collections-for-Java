@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class UpdateTagRequest {
+public class TagRequest {
 
   @NotEmpty
   private String name;

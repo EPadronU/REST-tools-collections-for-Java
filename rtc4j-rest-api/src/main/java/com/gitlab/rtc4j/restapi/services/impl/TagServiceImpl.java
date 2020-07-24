@@ -1,6 +1,7 @@
 package com.gitlab.rtc4j.restapi.services.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -12,7 +13,9 @@ import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
 import com.gitlab.rtc4j.restapi.dtos.tag.UpdateTagRequest;
 import com.gitlab.rtc4j.restapi.services.TagService;
 import com.gitlab.rtc4j.restapi.transformers.TagTransformer;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,18 +45,32 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
+  @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TagResponse save(final @NotNull @Valid AddTagRequest request) {
     return TagTransformer
       .toResponse(tagDAO.save(TagTransformer.from(request)));
   }
 
   @Override
-  public @NotNull @Valid TagResponse update(final @NotNull @Valid UpdateTagRequest request) {
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid TagResponse update(
+    @Min(1L) final long id,
+    final @NotNull @Valid UpdateTagRequest request) {
     return tagDAO
-      .findById(request.getId())
+      .findById(id)
       .map(dbTag -> TagTransformer.from(dbTag, request))
       .map(tagDAO::save)
       .map(TagTransformer::toResponse)
       .orElseThrow();
+  }
+
+  @Override
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid void deleteById(@Min(1L) final long id) {
+    try {
+      tagDAO.deleteById(id);
+    } catch (EmptyResultDataAccessException ignore) {
+      throw new NoSuchElementException();
+    }
   }
 }

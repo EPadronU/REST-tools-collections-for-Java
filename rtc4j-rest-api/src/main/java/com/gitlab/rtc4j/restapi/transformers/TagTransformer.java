@@ -28,7 +28,7 @@ public class TagTransformer {
       .name(tag.getName())
       .isMeta(!tag.getTags().isEmpty())
       .tags(tag.getTags().stream().map(Tag::getId).collect(toSet()))
-      .metaTags(tag.getTags().stream().map(Tag::getId).collect(toSet()))
+      .metaTags(tag.getMetaTags().stream().map(Tag::getId).collect(toSet()))
       .taggedItems(tag.getTaggedItems().stream().map(TodoItem::getId).collect(toSet()))
       .build();
   }
@@ -45,10 +45,6 @@ public class TagTransformer {
   @NotNull
   @Valid
   public Tag from(@NotNull @Valid final Tag tag, @NotNull @Valid final UpdateTagRequest request) {
-    if (tag.getId() != request.getId()) {
-      throw new IllegalArgumentException("The IDs don't match");
-    }
-
     return tag
       .toBuilder()
       .name(request.getName())

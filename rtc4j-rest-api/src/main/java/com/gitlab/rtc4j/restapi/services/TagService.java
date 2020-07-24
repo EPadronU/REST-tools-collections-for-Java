@@ -24,5 +24,11 @@ public interface TagService {
 
   @NotNull
   @Valid
-  TagResponse update(@NotNull @Valid final UpdateTagRequest request);
+  TagResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final UpdateTagRequest request);
+
+  @NotNull
+  @Valid
+  void deleteById(@Min(1L) final long id);
 }

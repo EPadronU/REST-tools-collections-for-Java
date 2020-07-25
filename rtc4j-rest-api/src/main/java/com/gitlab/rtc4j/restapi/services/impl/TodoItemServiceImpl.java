@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import com.gitlab.rtc4j.restapi.daos.TodoItemDAO;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
+import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemTagsRequest;
 import com.gitlab.rtc4j.restapi.services.TodoItemService;
 import com.gitlab.rtc4j.restapi.transformers.TodoItemTransformer;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -71,5 +72,18 @@ public class TodoItemServiceImpl implements TodoItemService {
     } catch (EmptyResultDataAccessException ignore) {
       throw new NoSuchElementException();
     }
+  }
+
+  @Override
+  @Transactional(rollbackFor = {Exception.class})
+  public @NotNull @Valid TodoItemResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final TodoItemTagsRequest request) {
+    return todoItemDAO
+      .findById(id)
+      .map(dbTodoItem -> TodoItemTransformer.from(dbTodoItem, request))
+      .map(todoItemDAO::save)
+      .map(TodoItemTransformer::toResponse)
+      .orElseThrow();
   }
 }

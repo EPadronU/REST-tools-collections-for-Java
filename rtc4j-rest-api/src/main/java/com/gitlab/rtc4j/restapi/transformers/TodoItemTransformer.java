@@ -8,6 +8,7 @@ import com.gitlab.rtc4j.restapi.domain.TodoItem;
 import com.gitlab.rtc4j.restapi.domain.TodoList;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
+import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemTagsRequest;
 import lombok.experimental.UtilityClass;
 
 import static java.util.stream.Collectors.toSet;
@@ -87,6 +88,22 @@ public class TodoItemTransformer {
         .collect(toSet()))
       .weight(request.getWeight())
       .status(request.getStatus())
+      .build();
+  }
+
+  @NotNull
+  @Valid
+  public TodoItem from(
+    @NotNull @Valid final TodoItem todoItem,
+    @NotNull @Valid final TodoItemTagsRequest request) {
+
+    return todoItem
+      .toBuilder()
+      .tags(request
+        .getTags()
+        .stream()
+        .map(id -> Tag.builder().id(id).build())
+        .collect(toSet()))
       .build();
   }
 }

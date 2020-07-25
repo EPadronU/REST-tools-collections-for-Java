@@ -17,11 +17,7 @@ public class TagTransformer {
 
   @NotNull
   @Valid
-  public TagResponse toResponse(@Valid Tag tag) {
-    if (tag == null) {
-      return null;
-    }
-
+  public TagResponse toResponse(@NotNull @Valid Tag tag) {
     return TagResponse
       .builder()
       .id(tag.getId())
@@ -56,7 +52,6 @@ public class TagTransformer {
   public Tag from(
     @NotNull @Valid final Tag tag,
     @NotNull @Valid final MetaTagTagsRequest request) {
-
     return tag
       .toBuilder()
       .tags(request

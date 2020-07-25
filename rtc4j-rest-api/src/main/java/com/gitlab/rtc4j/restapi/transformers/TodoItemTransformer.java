@@ -18,11 +18,7 @@ public class TodoItemTransformer {
 
   @NotNull
   @Valid
-  public TodoItemResponse toResponse(@Valid TodoItem todoItem) {
-    if (todoItem == null) {
-      return null;
-    }
-
+  public TodoItemResponse toResponse(@NotNull @Valid TodoItem todoItem) {
     final @Valid TodoItem parent = todoItem.getParent();
 
     return TodoItemResponse

@@ -1,7 +1,6 @@
 package com.gitlab.rtc4j.restapi.services.impl;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -13,7 +12,6 @@ import com.gitlab.rtc4j.restapi.dtos.tag.TagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
 import com.gitlab.rtc4j.restapi.services.TagService;
 import com.gitlab.rtc4j.restapi.transformers.TagTransformer;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,11 +65,7 @@ public class TagServiceImpl implements TagService {
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid void deleteById(@Min(1L) final long id) {
-    try {
-      tagDAO.deleteById(id);
-    } catch (EmptyResultDataAccessException ignore) {
-      throw new NoSuchElementException();
-    }
+    tagDAO.deleteById(id);
   }
 
   @Override

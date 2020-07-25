@@ -1,7 +1,6 @@
 package com.gitlab.rtc4j.restapi.services.impl;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -13,7 +12,6 @@ import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemTagsRequest;
 import com.gitlab.rtc4j.restapi.services.TodoItemService;
 import com.gitlab.rtc4j.restapi.transformers.TodoItemTransformer;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,11 +65,7 @@ public class TodoItemServiceImpl implements TodoItemService {
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid void deleteById(@Min(1L) final long id) {
-    try {
-      todoItemDAO.deleteById(id);
-    } catch (EmptyResultDataAccessException ignore) {
-      throw new NoSuchElementException();
-    }
+    todoItemDAO.deleteById(id);
   }
 
   @Override

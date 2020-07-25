@@ -53,15 +53,15 @@ public class Application implements ApplicationRunner {
 
   @Override
   public void run(final ApplicationArguments args) throws Exception {
-    final Tag developmentTag = tagDAO.save(Tag
-      .builder()
-      .name("Development")
-      .build());
-
     final Tag javaTag = tagDAO.save(Tag
       .builder()
       .name("Java")
-      .metaTags(Set.of(developmentTag))
+      .build());
+
+    final Tag developmentTag = tagDAO.save(Tag
+      .builder()
+      .name("Development")
+      .tags(Set.of(javaTag))
       .build());
 
     final TodoList rtc4jList = todoListDAO.save(TodoList

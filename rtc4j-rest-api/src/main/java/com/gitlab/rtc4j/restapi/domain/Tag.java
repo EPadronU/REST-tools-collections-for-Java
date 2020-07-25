@@ -43,14 +43,14 @@ public class Tag {
   @NotNull
   @ManyToMany
   @JoinTable(
-    name = "MetaTags",
+    name = "MetaTagTag",
     joinColumns = @JoinColumn(name = "parent_id"),
     inverseJoinColumns = @JoinColumn(name = "child_id"))
-  private Set<@NotNull @Valid Tag> metaTags = Collections.emptySet();
+  private Set<@NotNull @Valid Tag> tags = Collections.emptySet();
 
   @NotNull
-  @ManyToMany(mappedBy = "metaTags")
-  private Set<@NotNull @Valid Tag> tags = Collections.emptySet();
+  @ManyToMany(mappedBy = "tags")
+  private Set<@NotNull @Valid Tag> metaTags = Collections.emptySet();
 
   @NotNull
   @ManyToMany(mappedBy = "tags")
@@ -64,5 +64,11 @@ public class Tag {
     private Set<Tag> metaTags = Collections.emptySet();
 
     private Set<TodoItem> taggedItems = Collections.emptySet();
+
+    // Since there's no way to effectively modify these in the persistence layer
+    private TagBuilder metaTags(@NotNull Set<@NotNull @Valid Tag> tags) {
+      // Do nothing
+      return this;
+    }
   }
 }

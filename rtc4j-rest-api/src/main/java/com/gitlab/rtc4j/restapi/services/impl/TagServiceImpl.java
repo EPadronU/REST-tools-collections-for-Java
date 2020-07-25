@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.gitlab.rtc4j.restapi.daos.TagDAO;
+import com.gitlab.rtc4j.restapi.dtos.tag.MetaTagTagsRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
 import com.gitlab.rtc4j.restapi.services.TagService;
@@ -71,5 +72,17 @@ public class TagServiceImpl implements TagService {
     } catch (EmptyResultDataAccessException ignore) {
       throw new NoSuchElementException();
     }
+  }
+
+  @Override
+  public @NotNull @Valid TagResponse update(
+    @Min(1L) final long id,
+    @NotNull @Valid final MetaTagTagsRequest request) {
+    return tagDAO
+      .findById(id)
+      .map(dbTag -> TagTransformer.from(dbTag, request))
+      .map(tagDAO::save)
+      .map(TagTransformer::toResponse)
+      .orElseThrow();
   }
 }

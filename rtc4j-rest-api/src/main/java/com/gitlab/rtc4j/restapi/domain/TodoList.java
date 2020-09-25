@@ -52,5 +52,10 @@ public class TodoList {
     private String description = "";
 
     private Set<TodoItem> items = Collections.emptySet();
+
+    // Make this method unavailable since it won't be persisted
+    private TodoList.TodoListBuilder items(@NotNull Set<@NotNull @Valid TodoItem> items) {
+      throw new UnsupportedOperationException("This wouldn't be persisted.");
+    }
   }
 }

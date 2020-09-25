@@ -65,10 +65,14 @@ public class Tag {
 
     private Set<TodoItem> taggedItems = Collections.emptySet();
 
-    // Since there's no way to effectively modify these in the persistence layer
+    // Make this method unavailable since it won't be persisted
     private TagBuilder metaTags(@NotNull Set<@NotNull @Valid Tag> tags) {
-      // Do nothing
-      return this;
+      throw new UnsupportedOperationException("This wouldn't be persisted.");
+    }
+
+    // Make this method unavailable since it won't be persisted
+    private TagBuilder taggedItems(@NotNull Set<@NotNull @Valid TodoItem> taggedItems) {
+      throw new UnsupportedOperationException("This wouldn't be persisted.");
     }
   }
 }

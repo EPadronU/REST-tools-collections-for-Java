@@ -31,5 +31,5 @@ public class TagResponse {
   @NotNull
   private Set<Long> taggedItems;
 
-  private boolean isMeta;
+  private boolean meta;
 }

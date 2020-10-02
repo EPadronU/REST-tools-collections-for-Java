@@ -10,8 +10,8 @@ import com.gitlab.rtc4j.restapi.daos.TagDAO;
 import com.gitlab.rtc4j.restapi.dtos.tag.MetaTagTagsRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagRequest;
 import com.gitlab.rtc4j.restapi.dtos.tag.TagResponse;
+import com.gitlab.rtc4j.restapi.mappers.TagMapper;
 import com.gitlab.rtc4j.restapi.services.TagService;
-import com.gitlab.rtc4j.restapi.transformers.TagTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +22,13 @@ public class TagServiceImpl implements TagService {
 
   private final TagDAO tagDAO;
 
-  public TagServiceImpl(final TagDAO tagDAO) {
+  private final TagMapper tagMapper;
+
+  public TagServiceImpl(
+    final TagDAO tagDAO,
+    final TagMapper tagMapper) {
     this.tagDAO = tagDAO;
+    this.tagMapper = tagMapper;
   }
 
   @Override
@@ -31,7 +36,7 @@ public class TagServiceImpl implements TagService {
     return tagDAO
       .findAll()
       .stream()
-      .map(TagTransformer::toResponse)
+      .map(tagMapper::toTagResponse)
       .collect(toList());
   }
 
@@ -39,14 +44,14 @@ public class TagServiceImpl implements TagService {
   public @NotNull Optional<@Valid TagResponse> findById(@Min(1L) final long id) {
     return tagDAO
       .findById(id)
-      .map(TagTransformer::toResponse);
+      .map(tagMapper::toTagResponse);
   }
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TagResponse save(final @NotNull @Valid TagRequest request) {
-    return TagTransformer
-      .toResponse(tagDAO.save(TagTransformer.from(request)));
+    return tagMapper
+      .toTagResponse(tagDAO.save(tagMapper.toTag(request)));
   }
 
   @Override
@@ -56,9 +61,9 @@ public class TagServiceImpl implements TagService {
     final @NotNull @Valid TagRequest request) {
     return tagDAO
       .findById(id)
-      .map(dbTag -> TagTransformer.from(dbTag, request))
+      .map(dbTag -> tagMapper.toTag(dbTag, request))
       .map(tagDAO::save)
-      .map(TagTransformer::toResponse)
+      .map(tagMapper::toTagResponse)
       .orElseThrow();
   }
 
@@ -74,9 +79,9 @@ public class TagServiceImpl implements TagService {
     @NotNull @Valid final MetaTagTagsRequest request) {
     return tagDAO
       .findById(id)
-      .map(dbTag -> TagTransformer.from(dbTag, request))
+      .map(dbTag -> tagMapper.toTag(dbTag, request))
       .map(tagDAO::save)
-      .map(TagTransformer::toResponse)
+      .map(tagMapper::toTagResponse)
       .orElseThrow();
   }
 }

@@ -10,8 +10,8 @@ import com.gitlab.rtc4j.restapi.daos.TodoItemDAO;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemResponse;
 import com.gitlab.rtc4j.restapi.dtos.todo.item.TodoItemTagsRequest;
+import com.gitlab.rtc4j.restapi.mappers.TodoItemMapper;
 import com.gitlab.rtc4j.restapi.services.TodoItemService;
-import com.gitlab.rtc4j.restapi.transformers.TodoItemTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +22,13 @@ public class TodoItemServiceImpl implements TodoItemService {
 
   private final TodoItemDAO todoItemDAO;
 
-  public TodoItemServiceImpl(final TodoItemDAO todoItemDAO) {
+  private final TodoItemMapper todoItemMapper;
+
+  public TodoItemServiceImpl(
+    final TodoItemDAO todoItemDAO,
+    final TodoItemMapper todoItemMapper) {
     this.todoItemDAO = todoItemDAO;
+    this.todoItemMapper = todoItemMapper;
   }
 
   @Override
@@ -31,7 +36,7 @@ public class TodoItemServiceImpl implements TodoItemService {
     return todoItemDAO
       .findAll()
       .stream()
-      .map(TodoItemTransformer::toResponse)
+      .map(todoItemMapper::toTodoItemResponse)
       .collect(toList());
   }
 
@@ -39,14 +44,14 @@ public class TodoItemServiceImpl implements TodoItemService {
   public @NotNull Optional<@Valid TodoItemResponse> findById(@Min(1L) final long id) {
     return todoItemDAO
       .findById(id)
-      .map(TodoItemTransformer::toResponse);
+      .map(todoItemMapper::toTodoItemResponse);
   }
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TodoItemResponse save(@NotNull @Valid final TodoItemRequest request) {
-    return TodoItemTransformer
-      .toResponse(todoItemDAO.save(TodoItemTransformer.from(request)));
+    return todoItemMapper
+      .toTodoItemResponse(todoItemDAO.save(todoItemMapper.toTodoItem(request)));
   }
 
   @Override
@@ -56,9 +61,9 @@ public class TodoItemServiceImpl implements TodoItemService {
     @NotNull @Valid final TodoItemRequest request) {
     return todoItemDAO
       .findById(id)
-      .map(dbTodoItem -> TodoItemTransformer.from(dbTodoItem, request))
+      .map(dbTodoItem -> todoItemMapper.toTodoItem(dbTodoItem, request))
       .map(todoItemDAO::save)
-      .map(TodoItemTransformer::toResponse)
+      .map(todoItemMapper::toTodoItemResponse)
       .orElseThrow();
   }
 
@@ -75,9 +80,9 @@ public class TodoItemServiceImpl implements TodoItemService {
     @NotNull @Valid final TodoItemTagsRequest request) {
     return todoItemDAO
       .findById(id)
-      .map(dbTodoItem -> TodoItemTransformer.from(dbTodoItem, request))
+      .map(dbTodoItem -> todoItemMapper.toTodoItem(dbTodoItem, request))
       .map(todoItemDAO::save)
-      .map(TodoItemTransformer::toResponse)
+      .map(todoItemMapper::toTodoItemResponse)
       .orElseThrow();
   }
 }

@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 import com.gitlab.rtc4j.restapi.daos.TodoListDAO;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;
+import com.gitlab.rtc4j.restapi.mappers.TodoListMapper;
 import com.gitlab.rtc4j.restapi.services.TodoListService;
-import com.gitlab.rtc4j.restapi.transformers.TodoListTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +21,13 @@ public class TodoListServiceImpl implements TodoListService {
 
   private final TodoListDAO todoListDAO;
 
-  public TodoListServiceImpl(final TodoListDAO todoListDAO) {
+  private final TodoListMapper todoListMapper;
+
+  public TodoListServiceImpl(
+    final TodoListDAO todoListDAO,
+    final TodoListMapper todoListMapper) {
     this.todoListDAO = todoListDAO;
+    this.todoListMapper = todoListMapper;
   }
 
   @Override
@@ -30,7 +35,7 @@ public class TodoListServiceImpl implements TodoListService {
     return todoListDAO
       .findAll()
       .stream()
-      .map(TodoListTransformer::toResponse)
+      .map(todoListMapper::toTodoListResponse)
       .collect(toList());
   }
 
@@ -38,14 +43,14 @@ public class TodoListServiceImpl implements TodoListService {
   public @NotNull Optional<@Valid TodoListResponse> findById(@Min(1L) final long id) {
     return todoListDAO
       .findById(id)
-      .map(TodoListTransformer::toResponse);
+      .map(todoListMapper::toTodoListResponse);
   }
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
   public @NotNull @Valid TodoListResponse save(@NotNull @Valid final TodoListRequest request) {
-    return TodoListTransformer
-      .toResponse(todoListDAO.save(TodoListTransformer.from(request)));
+    return todoListMapper
+      .toTodoListResponse(todoListDAO.save(todoListMapper.toTodoList(request)));
   }
 
   @Override
@@ -55,9 +60,9 @@ public class TodoListServiceImpl implements TodoListService {
     @NotNull @Valid final TodoListRequest request) {
     return todoListDAO
       .findById(id)
-      .map(dbTodoList -> TodoListTransformer.from(dbTodoList, request))
+      .map(dbTodoList -> todoListMapper.toTodoList(dbTodoList, request))
       .map(todoListDAO::save)
-      .map(TodoListTransformer::toResponse)
+      .map(todoListMapper::toTodoListResponse)
       .orElseThrow();
   }
 

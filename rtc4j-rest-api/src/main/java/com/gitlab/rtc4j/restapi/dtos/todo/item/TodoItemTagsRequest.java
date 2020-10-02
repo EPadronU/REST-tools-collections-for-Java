@@ -16,5 +16,5 @@ import lombok.NoArgsConstructor;
 public class TodoItemTagsRequest {
 
   @NotNull
-  private Set<@Min(1L) Long> tags;
+  private Set<@NotNull @Min(1L) Long> tags;
 }

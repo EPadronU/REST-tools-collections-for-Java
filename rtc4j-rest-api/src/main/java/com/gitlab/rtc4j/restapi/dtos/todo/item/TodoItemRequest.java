@@ -36,11 +36,11 @@ public class TodoItemRequest {
   @Min(1L)
   private Long parentId;
 
-  public Optional<Long> getListId() {
+  public Optional<@Min(1L) Long> getListId() {
     return Optional.ofNullable(listId);
   }
 
-  public Optional<Long> getParentId() {
+  public Optional<@Min(1L) Long> getParentId() {
     return Optional.ofNullable(parentId);
   }
 }

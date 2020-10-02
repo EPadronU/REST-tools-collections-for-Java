@@ -26,5 +26,5 @@ public class TodoListResponse {
   private String description;
 
   @NotNull
-  private Set<Long> items;
+  private Set<@NotNull @Min(1L) Long> items;
 }

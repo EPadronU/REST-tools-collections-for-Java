@@ -23,13 +23,13 @@ public class TagResponse {
   private String name;
 
   @NotNull
-  private Set<Long> tags;
+  private Set<@NotNull @Min(1L) Long> tags;
 
   @NotNull
-  private Set<Long> metaTags;
+  private Set<@NotNull @Min(1L) Long> metaTags;
 
   @NotNull
-  private Set<Long> taggedItems;
+  private Set<@NotNull @Min(1L) Long> taggedItems;
 
   private boolean meta;
 }

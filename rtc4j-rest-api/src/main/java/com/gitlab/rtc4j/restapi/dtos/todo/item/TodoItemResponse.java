@@ -41,8 +41,8 @@ public class TodoItemResponse {
   private Long parent;
 
   @NotNull
-  private Set<Long> children;
+  private Set<@NotNull @Min(1L) Long> children;
 
   @NotNull
-  private Set<Long> tags;
+  private Set<@NotNull @Min(1L) Long> tags;
 }

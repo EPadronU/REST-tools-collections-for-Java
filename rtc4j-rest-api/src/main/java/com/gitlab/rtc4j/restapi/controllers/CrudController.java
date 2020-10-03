@@ -1,4 +1,4 @@
-package com.gitlab.rtc4j.restapi.resources;
+package com.gitlab.rtc4j.restapi.controllers;
 
 import java.util.List;
 import javax.validation.Valid;

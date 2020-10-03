@@ -1,4 +1,4 @@
-package com.gitlab.rtc4j.restapi.resources;
+package com.gitlab.rtc4j.restapi.controllers;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;

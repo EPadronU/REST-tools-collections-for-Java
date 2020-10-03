@@ -1,4 +1,4 @@
-package com.gitlab.rtc4j.restapi.resources;
+package com.gitlab.rtc4j.restapi.controllers;
 
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListRequest;
 import com.gitlab.rtc4j.restapi.dtos.todo.list.TodoListResponse;

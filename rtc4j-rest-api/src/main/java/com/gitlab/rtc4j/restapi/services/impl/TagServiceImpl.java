@@ -56,15 +56,14 @@ public class TagServiceImpl implements TagService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TagResponse update(
+  public @NotNull Optional<@Valid TagResponse> update(
     @Min(1L) final long id,
     final @NotNull @Valid TagRequest request) {
     return tagDAO
       .findById(id)
       .map(dbTag -> tagMapper.toTag(dbTag, request))
       .map(tagDAO::save)
-      .map(tagMapper::toTagResponse)
-      .orElseThrow();
+      .map(tagMapper::toTagResponse);
   }
 
   @Override
@@ -74,14 +73,13 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public @NotNull @Valid TagResponse update(
+  public @NotNull Optional<@Valid TagResponse> update(
     @Min(1L) final long id,
     @NotNull @Valid final MetaTagTagsRequest request) {
     return tagDAO
       .findById(id)
       .map(dbTag -> tagMapper.toTag(dbTag, request))
       .map(tagDAO::save)
-      .map(tagMapper::toTagResponse)
-      .orElseThrow();
+      .map(tagMapper::toTagResponse);
   }
 }

@@ -46,11 +46,11 @@ public abstract class CrudController<Request, Response> {
   public ResponseEntity<@Valid Response> updateById(
     @Min(1) @PathVariable final long id,
     @NotNull @Valid @RequestBody final Request request) {
-    return ResponseEntity.ok(service.update(id, request));
+    return ResponseEntity.of(service.update(id, request));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteById(@PathVariable final @Min(1L) long id) {
+  public ResponseEntity<Void> deleteById(@PathVariable @Min(1L) final long id) {
     service.deleteById(id);
 
     return ResponseEntity.noContent().build();

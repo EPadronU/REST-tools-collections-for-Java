@@ -33,6 +33,6 @@ public class TodoItemController extends CrudController<TodoItemRequest, TodoItem
   public ResponseEntity<TodoItemResponse> updateTags(
     @PathVariable @Min(1L) long id,
     @NotNull @Valid @RequestBody TodoItemTagsRequest request) {
-    return ResponseEntity.ok(service.update(id, request));
+    return ResponseEntity.of(service.update(id, request));
   }
 }

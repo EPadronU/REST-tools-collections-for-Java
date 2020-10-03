@@ -56,15 +56,14 @@ public class TodoItemServiceImpl implements TodoItemService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TodoItemResponse update(
+  public @NotNull Optional<@Valid TodoItemResponse> update(
     @Min(1L) final long id,
     @NotNull @Valid final TodoItemRequest request) {
     return todoItemDAO
       .findById(id)
       .map(dbTodoItem -> todoItemMapper.toTodoItem(dbTodoItem, request))
       .map(todoItemDAO::save)
-      .map(todoItemMapper::toTodoItemResponse)
-      .orElseThrow();
+      .map(todoItemMapper::toTodoItemResponse);
   }
 
   @Override
@@ -75,14 +74,13 @@ public class TodoItemServiceImpl implements TodoItemService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TodoItemResponse update(
+  public @NotNull Optional<@Valid TodoItemResponse> update(
     @Min(1L) final long id,
     @NotNull @Valid final TodoItemTagsRequest request) {
     return todoItemDAO
       .findById(id)
       .map(dbTodoItem -> todoItemMapper.toTodoItem(dbTodoItem, request))
       .map(todoItemDAO::save)
-      .map(todoItemMapper::toTodoItemResponse)
-      .orElseThrow();
+      .map(todoItemMapper::toTodoItemResponse);
   }
 }

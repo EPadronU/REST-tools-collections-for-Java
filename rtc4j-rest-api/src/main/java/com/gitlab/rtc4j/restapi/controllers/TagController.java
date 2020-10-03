@@ -33,6 +33,6 @@ public class TagController extends CrudController<TagRequest, TagResponse> {
   public ResponseEntity<TagResponse> updateTags(
     @PathVariable @Min(1L) long id,
     @NotNull @Valid @RequestBody MetaTagTagsRequest request) {
-    return ResponseEntity.ok(service.update(id, request));
+    return ResponseEntity.of(service.update(id, request));
   }
 }

@@ -55,15 +55,14 @@ public class TodoListServiceImpl implements TodoListService {
 
   @Override
   @Transactional(rollbackFor = {Exception.class})
-  public @NotNull @Valid TodoListResponse update(
+  public @NotNull Optional<@Valid TodoListResponse> update(
     @Min(1L) final long id,
     @NotNull @Valid final TodoListRequest request) {
     return todoListDAO
       .findById(id)
       .map(dbTodoList -> todoListMapper.toTodoList(dbTodoList, request))
       .map(todoListDAO::save)
-      .map(todoListMapper::toTodoListResponse)
-      .orElseThrow();
+      .map(todoListMapper::toTodoListResponse);
   }
 
   @Override

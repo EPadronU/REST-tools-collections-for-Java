@@ -19,8 +19,7 @@ public interface CrudService<Request, Response> {
   Response save(@NotNull @Valid final Request request);
 
   @NotNull
-  @Valid
-  Response update(
+  Optional<@Valid Response> update(
     @Min(1L) final long id,
     @NotNull @Valid final Request request);
 

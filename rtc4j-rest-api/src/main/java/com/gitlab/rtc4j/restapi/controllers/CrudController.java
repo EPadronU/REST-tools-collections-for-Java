@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Log4j2
-public class CrudController<Request, Response> {
+public abstract class CrudController<Request, Response> {
 
   private final CrudService<Request, Response> service;
 

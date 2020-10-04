@@ -6,6 +6,8 @@ spring:
     show-sql: true
     generate-ddl: true
 server:
+  servlet:
+    context-path: /api
   port: 8443
   http2:
     enabled: true

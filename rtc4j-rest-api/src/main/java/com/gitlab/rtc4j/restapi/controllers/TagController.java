@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/tag")
+@RequestMapping("/tag")
 public class TagController extends CrudController<TagRequest, TagResponse> {
 
   private final TagService service;

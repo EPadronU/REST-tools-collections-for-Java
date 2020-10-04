@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/todo-list")
+@RequestMapping("/todo-list")
 public class TodoListController extends CrudController<TodoListRequest, TodoListResponse> {
 
   public TodoListController(final TodoListService service) {

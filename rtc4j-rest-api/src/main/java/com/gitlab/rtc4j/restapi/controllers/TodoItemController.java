@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
-@RequestMapping("/api/todo-item")
+@RequestMapping("/todo-item")
 public class TodoItemController extends CrudController<TodoItemRequest, TodoItemResponse> {
 
   private final TodoItemService service;
